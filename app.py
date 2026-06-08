@@ -16,7 +16,7 @@ st.subheader("Dataset Preview")
 st.dataframe(df.head())
 
 st.subheader("Revenue Distribution")
-fig = px.histogram(df, x="Revenue")
+fig = px.histogram(df, x="NetProfit")
 st.plotly_chart(fig)
 
 features = [
