@@ -8,7 +8,7 @@ from sklearn.metrics import r2_score
 
 st.set_page_config(page_title="Restaurant Profit Optimization", layout="wide")
 
-df = pd.read_csv("SkyCity Auckland Restaurants & Bars.csv")
+df = pd.read_csv("restaurant_data.csv")
 
 st.title("Predictive Modeling & Profit Optimization Dashboard")
 
