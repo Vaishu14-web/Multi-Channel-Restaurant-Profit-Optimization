@@ -1,4 +1,3 @@
-```python id="f9x2mp"
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -31,19 +30,6 @@ fig.update_layout(
 )
 
 st.plotly_chart(fig, use_container_width=True)
-
-if "Revenue" in df.columns:
-
-    st.subheader("Revenue vs Net Profit")
-
-    scatter_fig = px.scatter(
-        df,
-        x="Revenue",
-        y="NetProfit",
-        title="Revenue vs Net Profit"
-    )
-
-    st.plotly_chart(scatter_fig, use_container_width=True)
 
 features = [
     "AOV",
@@ -104,4 +90,3 @@ prediction = model.predict(input_df)[0]
 st.subheader("Predicted Net Profit")
 
 st.success(f"${prediction:,.2f}")
-```
