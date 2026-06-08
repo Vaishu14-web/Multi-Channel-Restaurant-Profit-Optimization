@@ -1,3 +1,4 @@
+```python id="f9x2mp"
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -14,11 +15,35 @@ st.title("Predictive Modeling & Profit Optimization Dashboard")
 st.subheader("Dataset Preview")
 st.dataframe(df.head())
 
-numeric_cols = df.select_dtypes(include=['number']).columns
+st.subheader("Net Profit Distribution")
 
-st.subheader("Data Visualization")
-fig = px.histogram(df, x=numeric_cols[0])
-st.plotly_chart(fig)
+fig = px.histogram(
+    df,
+    x="NetProfit",
+    nbins=30,
+    title="Net Profit Distribution"
+)
+
+fig.update_layout(
+    xaxis_title="Net Profit",
+    yaxis_title="Count",
+    bargap=0.1
+)
+
+st.plotly_chart(fig, use_container_width=True)
+
+if "Revenue" in df.columns:
+
+    st.subheader("Revenue vs Net Profit")
+
+    scatter_fig = px.scatter(
+        df,
+        x="Revenue",
+        y="NetProfit",
+        title="Revenue vs Net Profit"
+    )
+
+    st.plotly_chart(scatter_fig, use_container_width=True)
 
 features = [
     "AOV",
@@ -38,10 +63,14 @@ X = df[features]
 y = df[target]
 
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
+    X,
+    y,
+    test_size=0.2,
+    random_state=42
 )
 
 model = RandomForestRegressor()
+
 model.fit(X_train, y_train)
 
 pred = model.predict(X_test)
@@ -49,13 +78,14 @@ pred = model.predict(X_test)
 score = r2_score(y_test, pred)
 
 st.subheader("Model Accuracy")
-st.write(f"R² Score: {score:.2f}")
+st.success(f"R² Score: {score:.2f}")
 
 st.sidebar.header("Scenario Simulation")
 
 input_data = {}
 
 for col in features:
+
     min_val = float(df[col].min())
     max_val = float(df[col].max())
     mean_val = float(df[col].mean())
@@ -72,4 +102,6 @@ input_df = pd.DataFrame([input_data])
 prediction = model.predict(input_df)[0]
 
 st.subheader("Predicted Net Profit")
+
 st.success(f"${prediction:,.2f}")
+```
