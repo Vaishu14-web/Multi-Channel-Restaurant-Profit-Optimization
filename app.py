@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score
@@ -9,41 +8,24 @@ st.set_page_config(page_title="Restaurant Profit Optimization", layout="wide")
 
 df = pd.read_csv("restaurant_data.csv")
 
-st.title("Predictive Modeling & Profit Optimization Dashboard")
+df.columns = df.columns.str.strip()
+
+st.title("Restaurant Profit Optimization Dashboard")
 
 st.subheader("Dataset Preview")
 st.dataframe(df.head())
 
-st.subheader("Net Profit Distribution")
+st.subheader("Dataset Columns")
+st.write(df.columns.tolist())
 
-fig = px.histogram(
-    df,
-    x="NetProfit",
-    nbins=30,
-    title="Net Profit Distribution"
-)
+numeric_cols = df.select_dtypes(include=['number']).columns.tolist()
 
-fig.update_layout(
-    xaxis_title="Net Profit",
-    yaxis_title="Count",
-    bargap=0.1
-)
+st.subheader("Numeric Columns")
+st.write(numeric_cols)
 
-st.plotly_chart(fig, use_container_width=True)
+target = numeric_cols[-1]
 
-features = [
-    "AOV",
-    "MonthlyOrders",
-    "InStoreShare",
-    "UE_share",
-    "DD_share",
-    "SD_share",
-    "CommissionRate"
-]
-
-target = "NetProfit"
-
-features = [col for col in features if col in df.columns]
+features = numeric_cols[:-1]
 
 X = df[features]
 y = df[target]
@@ -87,6 +69,5 @@ input_df = pd.DataFrame([input_data])
 
 prediction = model.predict(input_df)[0]
 
-st.subheader("Predicted Net Profit")
-
-st.success(f"${prediction:,.2f}")
+st.subheader("Predicted Value")
+st.success(f"{prediction:,.2f}")
