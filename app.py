@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -15,8 +14,10 @@ st.title("Predictive Modeling & Profit Optimization Dashboard")
 st.subheader("Dataset Preview")
 st.dataframe(df.head())
 
-st.subheader("Revenue Distribution")
-fig = px.histogram(df, x="NetProfit")
+numeric_cols = df.select_dtypes(include=['number']).columns
+
+st.subheader("Data Visualization")
+fig = px.histogram(df, x=numeric_cols[0])
 st.plotly_chart(fig)
 
 features = [
@@ -30,6 +31,8 @@ features = [
 ]
 
 target = "NetProfit"
+
+features = [col for col in features if col in df.columns]
 
 X = df[features]
 y = df[target]
@@ -50,23 +53,21 @@ st.write(f"R² Score: {score:.2f}")
 
 st.sidebar.header("Scenario Simulation")
 
-aov = st.sidebar.slider("AOV", 10, 200, 50)
-orders = st.sidebar.slider("Monthly Orders", 100, 10000, 1000)
-instore = st.sidebar.slider("InStore Share", 0.0, 1.0, 0.4)
-ue = st.sidebar.slider("Uber Eats Share", 0.0, 1.0, 0.3)
-dd = st.sidebar.slider("DoorDash Share", 0.0, 1.0, 0.2)
-sd = st.sidebar.slider("Self Delivery Share", 0.0, 1.0, 0.1)
-commission = st.sidebar.slider("Commission Rate", 0.0, 0.5, 0.2)
+input_data = {}
 
-input_df = pd.DataFrame({
-    "AOV":[aov],
-    "MonthlyOrders":[orders],
-    "InStoreShare":[instore],
-    "UE_share":[ue],
-    "DD_share":[dd],
-    "SD_share":[sd],
-    "CommissionRate":[commission]
-})
+for col in features:
+    min_val = float(df[col].min())
+    max_val = float(df[col].max())
+    mean_val = float(df[col].mean())
+
+    input_data[col] = st.sidebar.slider(
+        col,
+        min_value=min_val,
+        max_value=max_val,
+        value=mean_val
+    )
+
+input_df = pd.DataFrame([input_data])
 
 prediction = model.predict(input_df)[0]
 
